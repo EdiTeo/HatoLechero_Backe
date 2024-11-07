@@ -21,7 +21,7 @@ Route::get('/productor', [ProductoresController::class, 'index']);
 Route::get('/vaca', [VacaController::class, 'index']);
 Route::get('/produccionLeche', [ProduccionLecheController::class, 'index']);
 Route::get('/reproduccion', [ReproduccionController::class, 'index']);
-
+Route::post('/vacas', [VacaController::class, 'store']);
 
 Route::get('/test', function () {
     return response()->json(['message' => 'API is workingsssssss!']);
