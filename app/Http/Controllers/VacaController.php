@@ -17,7 +17,7 @@ class VacaController extends Controller
         $validated = $request->validate([
             'productor_id' => 'required|exists:productores,productor_id',
             'nombre' => 'required|string|max:100',
-            'etapa_de_crecimiento' => 'required|in:ternero,juvenil,adulto',
+            'etapa_de_crecimiento' => 'required|in:ternero,juvenil,adulto,cria',
             'estado_reproductivo' => 'required|in:gestante,no_gestante,en_lactancia,seco',
             'raza' => 'required|string|max:50',
             'fecha_nacimiento' => 'required|date',
@@ -40,5 +40,16 @@ class VacaController extends Controller
         ], 500);
     }
 }
+public function contarPorEtapaDeCrecimiento()
+{
+    $conteoEtapas = Vaca::select('etapa_de_crecimiento', \DB::raw('count(*) as total'))
+        ->groupBy('etapa_de_crecimiento')
+        ->get();
+
+    return response()->json([
+        'data' => $conteoEtapas
+    ]);
+}
+
 
 }
