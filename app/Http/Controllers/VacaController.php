@@ -2,69 +2,43 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Vaca;
 use Illuminate\Http\Request;
+use App\Models\Vaca;
 
 class VacaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
+    public function index(){
         return Vaca::all();
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
-    {
-        $vaca = Vaca::create($request->all());
-        return response()->json($vaca, 201);
-    }
+{
+    try {
+        // Validar los datos
+        $validated = $request->validate([
+            'productor_id' => 'required|exists:productores,productor_id',
+            'nombre' => 'required|string|max:100',
+            'etapa_de_crecimiento' => 'required|in:ternero,juvenil,adulto',
+            'estado_reproductivo' => 'required|in:gestante,no_gestante,en_lactancia,seco',
+            'raza' => 'required|string|max:50',
+            'fecha_nacimiento' => 'required|date',
+            'estado' => 'required|in:activa,inactiva',
+        ]);
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Vaca $vaca)
-    {
-        return Vaca::findOrFail($vaca);
-    }
+        // Crear la vaca y guardarla en la base de datos
+        $vaca = Vaca::create($validated);
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Vaca $vaca)
-    {
-        //
+        // Devolver la respuesta exitosa
+        return response()->json([
+            'message' => 'Vaca registrada exitosamente',
+            'data' => $vaca,
+        ], 201);
+    } catch (\Exception $e) {
+        // Manejar el error y devolver la respuesta
+        return response()->json([
+            'error' => 'Ocurrió un error al registrar la vaca',
+            'details' => $e->getMessage(),
+        ], 500);
     }
+}
 
-    /**
-     * Update the specified resource in storage.
-     */
-    
-
-    public function update(Request $request, Vaca $vaca)
-    {
-        $vaca = Vaca::findOrFail($vaca);
-        $vaca->update($request->all());
-        return response()->json($vaca, 200);
-    }
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Vaca $vaca)
-    {
-        Vaca::destroy($vaca);
-        return response()->json(null, 204);
-    }
 }
