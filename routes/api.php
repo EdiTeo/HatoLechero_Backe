@@ -24,6 +24,9 @@ Route::get('/reproduccion', [ReproduccionController::class, 'index']);
 Route::post('/vacas', [VacaController::class, 'store']);
 Route::get('/vacas/contar-por-etapa', [VacaController::class, 'contarPorEtapaDeCrecimiento']);
 
+Route::get('/vacas/{id}', [VacaController::class, 'show']);
+Route::put('/vacas/{id}', [VacaController::class, 'update']);
+Route::delete('/vacas/{id}', [VacaController::class, 'destroy']);
 
 
 
