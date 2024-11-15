@@ -22,7 +22,12 @@ Route::get('/vaca', [VacaController::class, 'index']);
 Route::get('/produccionLeche', [ProduccionLecheController::class, 'index']);
 Route::get('/reproduccion', [ReproduccionController::class, 'index']);
 Route::post('/vacas', [VacaController::class, 'store']);
-Route::get('/vacas/contar-por-etapa', [VacaController::class, 'contarPorEtapaDeCrecimiento']);
+Route::get('/vacas/contar-por-etapa-y-estado', [VacaController::class, 'contarPorEtapaDeCrecimientoYEstadoReproductivo']);
+Route::put('/vacas/{vaca_id}', [VacaController::class, 'update']);
+Route::delete('/vacas/{vaca_id}', [VacaController::class, 'destroy']);
+
+Route::get('/vacas/{vaca_id}/historial', [HistorialMedicoController::class, 'obtenerHistorialPorVaca']);
+Route::post('/historial-medico', [HistorialMedicoController::class, 'agregarDiagnostico']);
 
 
 
