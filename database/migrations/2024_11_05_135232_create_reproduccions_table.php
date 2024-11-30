@@ -18,8 +18,12 @@ return new class extends Migration
             $table->date('fecha_inseminacion');
             $table->date('fecha_estimada_parto');
             $table->date('fecha_real_parto')->nullable();
-            $table->boolean('fue_prematuro')->default(false);
-            $table->enum('estado_parto', ['normal', 'prematuro', 'aborto']);
+            $table->enum('estado_parto', ['normal', 'prematuro', 'aborto','fracaso'])->nullable();// añadir fracaso
+            // Campos nuevos solicitados
+            $table->date('fecha_secado')->nullable(); // Fecha de secado
+            $table->date('fecha_revision')->nullable(); // Fecha de revisión
+            $table->string('raza_toro')->nullable(); // Raza del toro
+            $table->text('nota')->nullable(); // Nota adicional
             $table->timestamps();
         });
     }

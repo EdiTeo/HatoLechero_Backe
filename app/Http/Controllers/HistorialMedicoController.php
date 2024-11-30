@@ -57,4 +57,20 @@ public function agregarDiagnostico(Request $request)
 
         return response()->json(['message' => 'Diagnóstico agregado exitosamente', 'data' => $historial], 201);
     }
+    public function obtenerVacasEnTratamientoHoy()
+{
+    // Fecha actual
+    $fechaHoy = Carbon::today();
+
+    // Contar las vacas en tratamiento
+    $vacasEnTratamiento = HistorialMedico::where('tipo', 'tratamiento')
+        ->whereDate('fecha_inicio', '<=', $fechaHoy)
+        ->whereDate('fecha_fin', '>=', $fechaHoy)
+        ->count();
+
+    return response()->json([
+        'vacas_en_tratamiento' => $vacasEnTratamiento
+    ]);
+}
+
 }

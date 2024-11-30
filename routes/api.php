@@ -28,9 +28,17 @@ Route::delete('/vacas/{vaca_id}', [VacaController::class, 'destroy']);
 
 Route::get('/vacas/{vaca_id}/historial', [HistorialMedicoController::class, 'obtenerHistorialPorVaca']);
 Route::post('/historial-medico', [HistorialMedicoController::class, 'agregarDiagnostico']);
+Route::get('/historial-medico/vacas-en-tratamiento-hoy', [HistorialMedicoController::class, 'obtenerVacasEnTratamientoHoy']);
 
 
+Route::post('/reproducciones', [ReproduccionController::class, 'store']);
+Route::get('vaca/{vacaId}/inseminacion-pendiente', [ReproduccionController::class, 'obtenerInseminacionPendiente']);
+Route::put('reproducciones/{reproduccion_id}', [ReproduccionController::class, 'actualizarParto']);
+Route::get('/vacas-preñadas', [ReproduccionController::class, 'contarVacasPrenadas']);
 
+Route::get('/produccion-leche/hoy', [ProduccionLecheController::class, 'getProduccionHoy']);
+Route::get('/produccion-leche/mes-actual', [ProduccionLecheController::class, 'getProduccionMensual']);
+Route::post('/produccion-leche', [ProduccionLecheController::class, 'store']);
 
 Route::get('/test', function () {
     return response()->json(['message' => 'API is workingsssssss!']);

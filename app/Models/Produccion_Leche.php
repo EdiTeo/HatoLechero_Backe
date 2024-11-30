@@ -8,4 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class Produccion_Leche extends Model
 {
     use HasFactory;
+    protected $table = 'produccion__leches';
+
+    protected $fillable = [
+        'productor_id',
+        'cantidad_animales',
+        'cantidad_litros',
+        'fecha_produccion',
+        'tipo_ordeño',
+    ];
 }
