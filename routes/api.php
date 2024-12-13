@@ -7,6 +7,7 @@ use App\Http\Controllers\VacaController;
 use App\Http\Controllers\ProduccionLecheController;
 use App\Http\Controllers\HistorialMedicoController;
 use App\Http\Controllers\ReproduccionController;
+use App\Http\Controllers\AlertaHatoController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -39,6 +40,12 @@ Route::get('/vacas-preñadas', [ReproduccionController::class, 'contarVacasPrena
 Route::get('/produccion-leche/hoy', [ProduccionLecheController::class, 'getProduccionHoy']);
 Route::get('/produccion-leche/mes-actual', [ProduccionLecheController::class, 'getProduccionMensual']);
 Route::post('/produccion-leche', [ProduccionLecheController::class, 'store']);
+Route::get('produccion-leche/mes', [ProduccionLecheController::class, 'getProduccionMensual1']);
+Route::get('/produccion-leche/fecha', [ProduccionLecheController::class, 'getProduccionPorFecha']);
+
+Route::get('/alertas/productor/{productor_id}', [AlertaHatoController::class, 'getAlertasByProductorId']);
+Route::post('alertas', [AlertaHatoController::class, 'store']);
+
 
 Route::get('/test', function () {
     return response()->json(['message' => 'API is workingsssssss!']);

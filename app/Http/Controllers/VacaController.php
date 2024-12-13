@@ -48,10 +48,19 @@ public function contarPorEtapaDeCrecimientoYEstadoReproductivo()
             ->groupBy('etapa_de_crecimiento')
             ->get();
 
-        // Conteo por estado reproductivo
+        // Conteo por estado reproductivo con los nombres de las vacas
         $conteoEstadosReproductivos = Vaca::select('estado_reproductivo', \DB::raw('count(*) as total'))
             ->groupBy('estado_reproductivo')
-            ->get();
+            ->get()
+            ->map(function($item) {
+                // Obtener los nombres de las vacas para el estado reproductivo actual
+                $nombresVacas = Vaca::where('estado_reproductivo', $item->estado_reproductivo)
+                    ->pluck('nombre'); // Pluck nos da una colección con los nombres de las vacas
+
+                // Añadir los nombres de las vacas al resultado
+                $item->nombres_vacas = $nombresVacas;
+                return $item;
+            });
 
         // Verifica el contenido antes de enviarlo
         \Log::info("Conteo de etapas: ", $conteoEtapas->toArray());
@@ -65,6 +74,7 @@ public function contarPorEtapaDeCrecimientoYEstadoReproductivo()
         return response()->json(['error' => $e->getMessage()], 500);
     }
 }
+
 public function update(Request $request, $vaca_id)
 {
     try {

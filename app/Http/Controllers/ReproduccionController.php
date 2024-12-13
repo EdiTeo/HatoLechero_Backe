@@ -79,7 +79,7 @@ public function actualizarParto(Request $request, $reproduccion_id)
     // Valida los datos de entrada
     $validated = $request->validate([
         'fecha_real_parto' => 'required|date',
-        'estado_parto' => 'required|in:normal,prematuro,aborto',  // Agrega más valores si es necesario
+        'estado_parto' => 'required|in:normal,prematuro,aborto,fracaso',  // Agrega más valores si es necesario
     ]);
 
     try {
@@ -99,18 +99,23 @@ public function actualizarParto(Request $request, $reproduccion_id)
         return response()->json(['mensaje' => 'Ocurrió un error al actualizar los detalles del parto.', 'error' => $e->getMessage()], 500);
     }
 }
-
 public function contarVacasPrenadas()
 {
     // Contamos las vacas asociadas a reproducciones que no tengan fecha_real_parto ni estado_parto
     $vacasPreñadas = Reproduccion::whereNull('fecha_real_parto')
                                 ->whereNull('estado_parto')
-                                ->count();
+                                ->with('vaca') // Cargamos la relación 'vaca' para obtener el nombre
+                                ->get();
 
-    // Devolvemos la cantidad de vacas preñadas como respuesta JSON
-    return response()->json(['vacas_preñadas' => $vacasPreñadas]);
+    // Extraemos los nombres de las vacas preñadas
+    $nombresVacasPreñadas = $vacasPreñadas->pluck('vaca.nombre'); // Suponiendo que 'nombre' es el campo en el modelo Vaca
+
+    // Devolvemos la cantidad de vacas preñadas y los nombres como respuesta JSON
+    return response()->json([
+        'vacas_preñadas' => $vacasPreñadas->count(),
+        'nombres_vacas_preñadas' => $nombresVacasPreñadas
+    ]);
 }
-
 
 
 

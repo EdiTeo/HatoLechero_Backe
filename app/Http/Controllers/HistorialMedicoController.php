@@ -62,15 +62,21 @@ public function agregarDiagnostico(Request $request)
     // Fecha actual
     $fechaHoy = Carbon::today();
 
-    // Contar las vacas en tratamiento
+    // Obtener las vacas en tratamiento
     $vacasEnTratamiento = HistorialMedico::where('tipo', 'tratamiento')
         ->whereDate('fecha_inicio', '<=', $fechaHoy)
         ->whereDate('fecha_fin', '>=', $fechaHoy)
-        ->count();
+        ->with('vaca') // Suponiendo que tienes una relación de 'vaca' en el modelo HistorialMedico
+        ->get();
+
+    // Obtener los nombres de las vacas en tratamiento
+    $nombresVacasEnTratamiento = $vacasEnTratamiento->pluck('vaca.nombre'); // Suponiendo que 'nombre' es el campo en el modelo Vaca
 
     return response()->json([
-        'vacas_en_tratamiento' => $vacasEnTratamiento
+        'vacas_en_tratamiento' => $vacasEnTratamiento->count(),
+        'nombres_vacas_en_tratamiento' => $nombresVacasEnTratamiento
     ]);
 }
+
 
 }

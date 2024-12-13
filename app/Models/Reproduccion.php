@@ -17,7 +17,11 @@ class Reproduccion extends Model
 
     // Si la clave primaria es de tipo entero (en este caso, lo es), puedes especificarlo
     protected $keyType = 'int';
-
+    public function vaca()
+    {
+        return $this->belongsTo(Vaca::class, 'vaca_id', 'vaca_id');
+    }
+    
     // Campos que se pueden rellenar masivamente
     protected $fillable = [
         'vaca_id',
