@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('productor_id');  
             $table->foreign('productor_id')->references('productor_id')->on('productores')->onDelete('cascade');
             $table->string('nombre', 100);
-            $table->enum('etapa_de_crecimiento', ['ternero', 'juvenil', 'adulto','cria']);
+            $table->enum('etapa_de_crecimiento', ['ternero', 'juvenil', 'adulto']);
             $table->enum('estado_reproductivo', ['gestante', 'no_gestante', 'en_lactancia', 'seco']);
             $table->string('raza', 50);
             $table->date('fecha_nacimiento');
