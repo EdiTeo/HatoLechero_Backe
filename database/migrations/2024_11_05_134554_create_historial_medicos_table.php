@@ -16,9 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('vaca_id'); 
             $table->foreign('vaca_id')->references('vaca_id')->on('vacas')->onDelete('cascade');
             $table->text('descripcion');
-            $table->enum('tipo', ['tratamiento', 'vacunación', 'fallecimiento']);
-            $table->string('medicamento')->nullable(); // Columna para almacenar el medicamento
-            $table->text('notas')->nullable();
+            $table->enum('tipo', ['tratamiento', 'vacunación', 'antibiótico']);
             $table->date('fecha_inicio');
             $table->date('fecha_fin')->nullable();
             $table->timestamps();
