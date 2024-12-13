@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('produccion__leches', function (Blueprint $table) {
             $table->id('produccion_id');
-            $table->unsignedBigInteger('vaca_id'); 
-            $table->foreign('vaca_id')->references('vaca_id')->on('vacas')->onDelete('cascade');
+            $table->unsignedBigInteger('productor_id'); // Cambiar vaca_id a productor_id
+            $table->foreign('productor_id')->references('productor_id')->on('productores')->onDelete('cascade'); // Actualizar referencia de clave foránea
+            $table->integer('cantidad_animales');
             $table->float('cantidad_litros');
             $table->date('fecha_produccion');
             $table->enum('tipo_ordeño', ['mañana', 'tarde', 'ambos']);
