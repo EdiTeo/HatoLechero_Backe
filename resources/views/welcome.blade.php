@@ -1,4 +1,17 @@
 <!DOCTYPE html>
+<<<<<<< HEAD
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Hato Lechero</title>
+</head>
+<body>
+    <h1>PRUEBAS CON Backend</h1>
+</body>
+</html>
+=======
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
@@ -131,3 +144,4 @@
         </div>
     </body>
 </html>
+>>>>>>> 8e067eff3492b4990e7506d24cf9716d21790751

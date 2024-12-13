@@ -4,10 +4,18 @@
 /public/hot
 /public/storage
 /storage/*.key
+<<<<<<< HEAD
+/storage/pail
+=======
+>>>>>>> 8e067eff3492b4990e7506d24cf9716d21790751
 /vendor
 .env
 .env.backup
 .env.production
+<<<<<<< HEAD
+.phpactor.json
+=======
+>>>>>>> 8e067eff3492b4990e7506d24cf9716d21790751
 .phpunit.result.cache
 Homestead.json
 Homestead.yaml
@@ -17,3 +25,7 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
+<<<<<<< HEAD
+/.zed
+=======
+>>>>>>> 8e067eff3492b4990e7506d24cf9716d21790751

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+
 use App\Models\Produccion_Leche;
 use Illuminate\Support\Facades\DB;
 
@@ -308,5 +309,6 @@ public function getProduccionMensual1(Request $request)
             'detalles_diarios' => $resultadosDiarios,
         ]);
     }
+
 
 }

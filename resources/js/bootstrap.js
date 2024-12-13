@@ -1,13 +1,18 @@
+<<<<<<< HEAD
+=======
 /**
  * We'll load the axios HTTP library which allows us to easily issue requests
  * to our Laravel back-end. This library automatically handles sending the
  * CSRF token as a header based on the value of the "XSRF" token cookie.
  */
 
+>>>>>>> 8e067eff3492b4990e7506d24cf9716d21790751
 import axios from 'axios';
 window.axios = axios;
 
 window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
+<<<<<<< HEAD
+=======
 
 /**
  * Echo exposes an expressive API for subscribing to channels and listening
@@ -30,3 +35,4 @@ window.axios.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 //     forceTLS: (import.meta.env.VITE_PUSHER_SCHEME ?? 'https') === 'https',
 //     enabledTransports: ['ws', 'wss'],
 // });
+>>>>>>> 8e067eff3492b4990e7506d24cf9716d21790751

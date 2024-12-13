@@ -1,6 +1,18 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+<<<<<<< HEAD
+use App\Http\Controllers\VacaController;
+use App\Http\Controllers\ProductorController;
+ 
+use App\Http\Controllers\ProduccionLecheController;
+Route::get('/', function () {
+    return view('welcome');
+});
+Route::apiResource('vacas', VacaController::class);
+Route::apiResource('productores',ProductorController::class);
+Route::apiResource('produccion-leche', ProduccionLecheController::class);
+=======
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +28,4 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+>>>>>>> 8e067eff3492b4990e7506d24cf9716d21790751
