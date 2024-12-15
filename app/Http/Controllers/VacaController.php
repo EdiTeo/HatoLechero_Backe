@@ -20,25 +20,30 @@ class VacaController extends Controller
             'etapa_de_crecimiento' => 'required|in:ternero,juvenil,adulto,cria',
             'estado_reproductivo' => 'required|in:gestante,no_gestante,en_lactancia,seco',
             'raza' => 'required|string|max:50',
-            'fecha_nacimiento' => 'required|date',
+            'fecha_nacimiento' => 'required|date|before_or_equal:today',
             'estado' => 'required|in:activa,inactiva',
         ]);
-
-        // Crear la vaca y guardarla en la base de datos
+    
+        // Insertar los datos usando Eloquent
         $vaca = Vaca::create($validated);
-
-        // Devolver la respuesta exitosa
+    
         return response()->json([
             'message' => 'Vaca registrada exitosamente',
             'data' => $vaca,
         ], 201);
+    
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'error' => 'Datos inválidos',
+            'details' => $e->errors(),
+        ], 422);
     } catch (\Exception $e) {
-        // Manejar el error y devolver la respuesta
         return response()->json([
             'error' => 'Ocurrió un error al registrar la vaca',
             'details' => $e->getMessage(),
         ], 500);
     }
+    
 }
 public function contarPorEtapaDeCrecimientoYEstadoReproductivo()
 {
