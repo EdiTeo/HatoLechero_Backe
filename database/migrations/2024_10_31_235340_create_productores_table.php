@@ -16,8 +16,10 @@ return new class extends Migration
             $table->string('nombre', 255); // Nombre del productor
             $table->string('celular', 10)->nullable(); // Celular del productor (opcional)
             $table->string('email', 255)->nullable(); // Correo electrónico del productor (opcional)
-            $table->time('hora_inicio_ordeño')->nullable(); // Hora de inicio del ordeño (opcional)
-            $table->time('hora_fin_ordeño')->nullable(); // Hora de fin del ordeño (opcional)
+         //   $table->time('hora_inicio_ordeño')->nullable(); // Hora de inicio del ordeño (opcional)
+         //   $table->time('hora_fin_ordeño')->nullable(); // Hora de fin del ordeño (opcional)
+            $table->string('password');
+            $table->rememberToken();
             $table->timestamps(); // Timestamps de creación y actualización
         });
     }

@@ -8,6 +8,7 @@ use App\Http\Controllers\ProduccionLecheController;
 use App\Http\Controllers\HistorialMedicoController;
 use App\Http\Controllers\ReproduccionController;
 use App\Http\Controllers\AlertaHatoController;
+use App\Http\Controllers\AuthController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -54,3 +55,5 @@ Route::get('/test', function () {
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+Route::post('register', [AuthController::class, 'register']);
+Route::post('login', [AuthController::class, 'login']);
