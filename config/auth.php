@@ -37,9 +37,13 @@ return [
 
     'guards' => [
         'web' => [
-            'driver' => 'session',
-            'provider' => 'users',
-        ],
+        'driver' => 'session',
+        'provider' => 'productores',
+    ],
+    'api' => [
+        'driver' => 'token',
+        'provider' => 'productores',
+    ],
     ],
 
     /*
@@ -60,10 +64,10 @@ return [
     */
 
     'providers' => [
-        'users' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\User::class,
-        ],
+        'productores' => [
+        'driver' => 'eloquent',
+        'model' => App\Models\Productor::class,
+    ],
 
         // 'users' => [
         //     'driver' => 'database',

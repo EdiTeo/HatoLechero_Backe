@@ -7,9 +7,14 @@ use App\Models\Vaca;
 
 class VacaController extends Controller
 {
-    public function index(){
-        return Vaca::all();
-    }
+    public function index($productor_id)
+{
+    // Filtrar las vacas por productor_id
+    $vacas = Vaca::where('productor_id', $productor_id)->get();
+
+    return response()->json($vacas);
+}
+
     public function store(Request $request)
 {
     try {
@@ -45,21 +50,24 @@ class VacaController extends Controller
     }
     
 }
-public function contarPorEtapaDeCrecimientoYEstadoReproductivo()
+public function contarPorEtapaDeCrecimientoYEstadoReproductivo($productor_id)
 {
     try {
-        // Conteo por etapa de crecimiento
+        // Conteo por etapa de crecimiento filtrado por productor_id
         $conteoEtapas = Vaca::select('etapa_de_crecimiento', \DB::raw('count(*) as total'))
+            ->where('productor_id', $productor_id)  // Filtrar por productor_id
             ->groupBy('etapa_de_crecimiento')
             ->get();
 
-        // Conteo por estado reproductivo con los nombres de las vacas
+        // Conteo por estado reproductivo con los nombres de las vacas filtrado por productor_id
         $conteoEstadosReproductivos = Vaca::select('estado_reproductivo', \DB::raw('count(*) as total'))
+            ->where('productor_id', $productor_id)  // Filtrar por productor_id
             ->groupBy('estado_reproductivo')
             ->get()
-            ->map(function($item) {
-                // Obtener los nombres de las vacas para el estado reproductivo actual
+            ->map(function($item) use ($productor_id) {
+                // Obtener los nombres de las vacas para el estado reproductivo actual filtrado por productor_id
                 $nombresVacas = Vaca::where('estado_reproductivo', $item->estado_reproductivo)
+                    ->where('productor_id', $productor_id)  // Filtrar por productor_id
                     ->pluck('nombre'); // Pluck nos da una colección con los nombres de las vacas
 
                 // Añadir los nombres de las vacas al resultado
@@ -79,6 +87,7 @@ public function contarPorEtapaDeCrecimientoYEstadoReproductivo()
         return response()->json(['error' => $e->getMessage()], 500);
     }
 }
+
 
 public function update(Request $request, $vaca_id)
 {

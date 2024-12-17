@@ -27,14 +27,15 @@ class ProduccionLecheController extends Controller
 
     return response()->json(['message' => 'Datos guardados correctamente']);
 }
-public function getProduccionHoy()
+public function getProduccionHoy($productor_id)
 {
     // Obtener la fecha actual
     $fechaHoy = now()->toDateString();
 
-    // Recuperar todos los registros de producción de leche para hoy
-    $produccionHoy = Produccion_Leche::whereDate('fecha_produccion', $fechaHoy)->get();
-
+    // Recuperar los registros de producción para hoy y el productor_id
+    $produccionHoy = Produccion_Leche::whereDate('fecha_produccion', $fechaHoy)
+                                      ->where('productor_id', $productor_id)
+                                      ->get();
     if ($produccionHoy->isEmpty()) {
         return response()->json([
             'fecha' => $fechaHoy,
@@ -147,15 +148,16 @@ public function getProduccionPorFecha(Request $request)
     ]);
 }
 
-public function getProduccionMensual()
+public function getProduccionMensual($productor_id)
 {
     // Obtener el mes y año actuales
     $mesActual = now()->month;
     $añoActual = now()->year;
 
-    // Obtener los registros del mes actual
+    // Obtener los registros del mes actual para el productor específico
     $produccionMensual = Produccion_Leche::whereYear('fecha_produccion', $añoActual)
         ->whereMonth('fecha_produccion', $mesActual)
+        ->where('productor_id', $productor_id)  // Filtrar por productor_id
         ->get();
 
     // Agrupar por fecha y procesar cada día
@@ -225,88 +227,103 @@ public function getProduccionMensual()
     ]);
 }
 public function getProduccionMensual1(Request $request)
-    {
-        // Obtener el mes desde los parámetros de la solicitud
-        $mesSeleccionado = $request->input('mes');
-        
-        // Obtener el año actual automáticamente
-        $añoSeleccionado = now()->year;
+{
+    // Obtener los parámetros de la solicitud
+    $mesSeleccionado = $request->input('mes');
+    $productorId = $request->input('productor_id');  // Obtener el productor_id
 
-        // Verificar si el mes proporcionado es válido
-        if (!$mesSeleccionado || $mesSeleccionado < 1 || $mesSeleccionado > 12) {
-            return response()->json(['error' => 'Mes inválido'], 400);
-        }
+    // Obtener el año actual automáticamente
+    $añoSeleccionado = now()->year;
 
-        // Obtener los registros del mes seleccionado y el año actual
-        $produccionMensual = Produccion_Leche::whereYear('fecha_produccion', $añoSeleccionado)
-            ->whereMonth('fecha_produccion', $mesSeleccionado)
-            ->get();
+    // Verificar si el mes proporcionado es válido
+    if (!$mesSeleccionado || $mesSeleccionado < 1 || $mesSeleccionado > 12) {
+        return response()->json(['error' => 'Mes inválido'], 400);
+    }
 
-        // Agrupar por fecha y procesar cada día
-        $resultadosDiarios = [];
-        $totalLecheMes = 0;
-        $totalAnimalesMes = 0;
+    // Verificar si el productor_id es válido
+    if (!$productorId) {
+        return response()->json(['error' => 'Productor ID es requerido'], 400);
+    }
 
-        foreach ($produccionMensual->groupBy('fecha_produccion') as $fecha => $registros) {
-            // Buscar si existe un registro con tipo de ordeño "ambos"
-            $produccionAmbos = $registros->where('tipo_ordeño', 'ambos')->first();
+    // Obtener los registros del mes seleccionado, el año actual y el productor_id
+    $produccionMensual = Produccion_Leche::whereYear('fecha_produccion', $añoSeleccionado)
+        ->whereMonth('fecha_produccion', $mesSeleccionado)
+        ->where('productor_id', $productorId)  // Filtrar por productor_id
+        ->get();
 
-            if ($produccionAmbos) {
-                $totalLeche = $produccionAmbos->cantidad_litros;
-                $totalAnimales = $produccionAmbos->cantidad_animales;
-            } else {
-                // Si no existe "ambos", combinar registros de "mañana" y "tarde"
-                $produccionManana = $registros->where('tipo_ordeño', 'mañana')->first();
-                $produccionTarde = $registros->where('tipo_ordeño', 'tarde')->first();
+    // Si no hay registros para ese productor en el mes seleccionado
+    if ($produccionMensual->isEmpty()) {
+        return response()->json(['error' => 'No se encontraron registros para el productor en este mes.'], 404);
+    }
 
-                $totalLeche = 0;
-                $totalAnimales = 0;
-                $count = 0;
+    // Agrupar por fecha y procesar cada día
+    $resultadosDiarios = [];
+    $totalLecheMes = 0;
+    $totalAnimalesMes = 0;
 
-                if ($produccionManana) {
-                    $totalLeche += $produccionManana->cantidad_litros;
-                    $totalAnimales += $produccionManana->cantidad_animales;
-                    $count++;
-                }
+    foreach ($produccionMensual->groupBy('fecha_produccion') as $fecha => $registros) {
+        // Inicializar las variables para el cálculo diario
+        $totalLeche = 0;
+        $totalAnimales = 0;
 
-                if ($produccionTarde) {
-                    $totalLeche += $produccionTarde->cantidad_litros;
-                    $totalAnimales += $produccionTarde->cantidad_animales;
-                    $count++;
-                }
+        // Buscar si existe un registro con tipo de ordeño "ambos"
+        $produccionAmbos = $registros->where('tipo_ordeño', 'ambos')->first();
 
-                if ($count > 0) {
-                    $totalAnimales = $totalAnimales / $count;
-                }
+        if ($produccionAmbos) {
+            $totalLeche = $produccionAmbos->cantidad_litros;
+            $totalAnimales = $produccionAmbos->cantidad_animales;
+        } else {
+            // Si no existe "ambos", combinar registros de "mañana" y "tarde"
+            $produccionManana = $registros->where('tipo_ordeño', 'mañana')->first();
+            $produccionTarde = $registros->where('tipo_ordeño', 'tarde')->first();
+
+            $count = 0;
+            if ($produccionManana) {
+                $totalLeche += $produccionManana->cantidad_litros;
+                $totalAnimales += $produccionManana->cantidad_animales;
+                $count++;
             }
 
-            // Sumar los totales mensuales
-            $totalLecheMes += $totalLeche;
-            $totalAnimalesMes += $totalAnimales;
+            if ($produccionTarde) {
+                $totalLeche += $produccionTarde->cantidad_litros;
+                $totalAnimales += $produccionTarde->cantidad_animales;
+                $count++;
+            }
 
-            // Guardar el resultado diario
-            $resultadosDiarios[] = [
-                'fecha' => $fecha,
-                'total_leche' => $totalLeche,
-                'total_animales' => round($totalAnimales, 2),
-            ];
+            if ($count > 0) {
+                $totalAnimales = $totalAnimales / $count;
+            }
         }
 
-        // Calcular promedios mensuales
-        $diasConRegistro = count($resultadosDiarios);
-        $promedioAnimales = $diasConRegistro > 0 ? $totalAnimalesMes / $diasConRegistro : 0;
-        $promedioLecheDiaria = $diasConRegistro > 0 ? $totalLecheMes / $diasConRegistro : 0;
+        // Sumar los totales mensuales
+        $totalLecheMes += $totalLeche;
+        $totalAnimalesMes += $totalAnimales;
 
-        // Retornar el resultado
-        return response()->json([
-            'mes' => $mesSeleccionado,
-            'año' => $añoSeleccionado,
-            'dias_con_registro' => $diasConRegistro,
-            'total_leche' => $totalLecheMes,
-            'promedio_animales' => round($promedioAnimales, 2),
-            'promedio_leche_diaria' => round($promedioLecheDiaria, 2),
-            'detalles_diarios' => $resultadosDiarios,
-        ]);
+        // Guardar el resultado diario
+        $resultadosDiarios[] = [
+            'fecha' => $fecha,
+            'total_leche' => $totalLeche,
+            'total_animales' => round($totalAnimales, 2),
+        ];
     }
+
+    // Calcular promedios mensuales
+    $diasConRegistro = count($resultadosDiarios);
+    $promedioAnimales = $diasConRegistro > 0 ? $totalAnimalesMes / $diasConRegistro : 0;
+    $promedioLecheDiaria = $diasConRegistro > 0 ? $totalLecheMes / $diasConRegistro : 0;
+
+    // Retornar el resultado
+    return response()->json([
+        'mes' => $mesSeleccionado,
+        'año' => $añoSeleccionado,
+        'dias_con_registro' => $diasConRegistro,
+        'total_leche' => $totalLecheMes,
+        'promedio_animales' => round($promedioAnimales, 2),
+        'promedio_leche_diaria' => round($promedioLecheDiaria, 2),
+        'detalles_diarios' => $resultadosDiarios,
+    ]);
+}
+
+
 
 }

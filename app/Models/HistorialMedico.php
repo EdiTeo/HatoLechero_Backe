@@ -27,7 +27,10 @@ class HistorialMedico extends Model
     {
         return $this->belongsTo(Vaca::class, 'vaca_id', 'vaca_id');
     }
-
+    protected $dates = [
+        'fecha_inicio',
+        'fecha_fin',
+    ];
     // Conversión de fechas
     protected $casts = [
         'fecha_inicio' => 'date',

@@ -99,11 +99,14 @@ public function actualizarParto(Request $request, $reproduccion_id)
         return response()->json(['mensaje' => 'Ocurrió un error al actualizar los detalles del parto.', 'error' => $e->getMessage()], 500);
     }
 }
-public function contarVacasPrenadas()
+public function contarVacasPrenadas($productor_id)
 {
     // Contamos las vacas asociadas a reproducciones que no tengan fecha_real_parto ni estado_parto
     $vacasPreñadas = Reproduccion::whereNull('fecha_real_parto')
                                 ->whereNull('estado_parto')
+                                ->whereHas('vaca', function($query) use ($productor_id) {
+                                    $query->where('productor_id', $productor_id); // Filtra las vacas por productor_id
+                                })
                                 ->with('vaca') // Cargamos la relación 'vaca' para obtener el nombre
                                 ->get();
 
@@ -116,6 +119,37 @@ public function contarVacasPrenadas()
         'nombres_vacas_preñadas' => $nombresVacasPreñadas
     ]);
 }
+public function obtenerDatosVaca($vacaId)
+{
+    try {
+        // Obtener todas las reproducciones relacionadas con la vaca, ordenadas por fecha descendente
+        $reproducciones = Reproduccion::where('vaca_id', $vacaId)
+            ->with('vaca') // Asegúrate de que la relación con el modelo Vaca está definida
+            ->orderBy('fecha_inseminacion', 'desc') // Ordenar por fecha más reciente primero
+            ->get();
+
+        // Si no se encuentran registros
+        if ($reproducciones->isEmpty()) {
+            return response()->json([
+                'mensaje' => 'No se encontraron datos de reproducción para esta vaca.',
+            ], 404);
+        }
+
+        // Devolver los datos
+        return response()->json([
+            'mensaje' => 'Datos de reproducción encontrados.',
+            'data' => $reproducciones,
+        ]);
+    } catch (\Exception $e) {
+        // Manejo de errores
+        return response()->json([
+            'mensaje' => 'Ocurrió un error al obtener los datos de la vaca.',
+            'error' => $e->getMessage(),
+        ], 500);
+    }
+}
+
+
 
 
 
